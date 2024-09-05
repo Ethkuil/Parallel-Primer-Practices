@@ -1,2 +1,5 @@
 CompileFlags:
+  Add: [
+        -I/usr/local/cuda/include
+  ]
   Remove: -forward-unknown-to-host-compiler
