@@ -22,7 +22,9 @@ void verify_inc(int *before, int *after, size_t n) {
   }
 }
 
-void test_inc(benchmark::State &state, IncImpl fn, size_t n, bool is_gpu) {
+void test_inc(benchmark::State &state, IncImpl fn, bool is_gpu) {
+  size_t n = state.range(0);
+
   // allocate
   int *A = new int[n];
   int *A_bak = new int[n];
@@ -60,15 +62,17 @@ void test_inc(benchmark::State &state, IncImpl fn, size_t n, bool is_gpu) {
   for (auto _ : state) {
     run_once();
   }
+  state.SetComplexityN(state.range(0));
 
   delete[] A;
   delete[] A_bak;
   cudaFree(A_gpu);
 }
 
-constexpr size_t N = 1 << 18; // 64 * 64 * 64
-BENCHMARK_CAPTURE(test_inc, serial, inc_serial, N, false)
-    ->Unit(benchmark::kMicrosecond);
-BENCHMARK_CAPTURE(test_inc, cuda_1thread, inc_cuda_1thread, N, true)
-    ->Unit(benchmark::kMicrosecond);
+#define MY_BENCHMARK_CONFIG                                                    \
+  Range(1 << 6, 1 << 18)->Unit(benchmark::kMicrosecond)
+BENCHMARK_CAPTURE(test_inc, serial, inc_serial, false)
+    ->MY_BENCHMARK_CONFIG->Complexity(benchmark::oN);
+BENCHMARK_CAPTURE(test_inc, cuda_1thread, inc_cuda_1thread, true)
+    ->MY_BENCHMARK_CONFIG->Complexity(benchmark::oN);
 BENCHMARK_MAIN();
