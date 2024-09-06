@@ -75,4 +75,6 @@ BENCHMARK_CAPTURE(test_inc, serial, inc_serial, false)
     ->MY_BENCHMARK_CONFIG->Complexity(benchmark::oN);
 BENCHMARK_CAPTURE(test_inc, cuda_1thread, inc_cuda_1thread, true)
     ->MY_BENCHMARK_CONFIG->Complexity(benchmark::oN);
+BENCHMARK_CAPTURE(test_inc, cuda_multi, inc_cuda_multi, true)
+    ->MY_BENCHMARK_CONFIG->Complexity(benchmark::o1);
 BENCHMARK_MAIN();
